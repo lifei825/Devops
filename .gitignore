@@ -6,5 +6,6 @@ dist
 build
 
 settings.py
-log/*
-__pycache__
+log/
+__pycache__/
+.idea/
