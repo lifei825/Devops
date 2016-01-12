@@ -2,14 +2,14 @@
 import time
 from tornado.options import options
 from tornado.web import RequestHandler
+from conf.settings import SESSION_SECRET, SESSION_SERVER, SESSION_TIMEOUT
+from bin.util.db import Session
 
 
 class BaseHandler(RequestHandler):
     def __init__(self, application, request, **kwargs):
         self.start = time.time()
-        self.userid = 0
-        self.errcode = 0
-        self.response = None
+        self.uid = 0
 
         super(BaseHandler, self).__init__(application, request, **kwargs)
         self.db = self.settings['db']
@@ -18,11 +18,14 @@ class BaseHandler(RequestHandler):
 class AuthHandler(BaseHandler):
     def __init__(self, application, request, **kwargs):
         super(AuthHandler, self).__init__(application, request, **kwargs)
+        self.session = Session(SESSION_SERVER, SESSION_TIMEOUT, SESSION_SECRET, self, options.debug)
+        self.save_uid()
 
     def get_current_user(self):
-        return self.session.get('userid')
+        return self.session.get('uid')
 
-        # if options.debug:
-        #     self.set_cookie("uid", str(self.userid), expires_days=30, httponly=True)
-        # else:
-        #     self.set_cookie("uid", str(self.userid), expires_days=30, httponly=True, secure=True)
+    def save_uid(self):
+        if options.debug:
+            self.set_cookie("uid", str(self.uid), expires_days=30, httponly=True)
+        else:
+            self.set_cookie("uid", str(self.uid), expires_days=30, httponly=True, secure=True)
