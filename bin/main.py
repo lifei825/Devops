@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import motor
 import tornado.escape
 import tornado.ioloop
 import tornado.options
@@ -8,8 +9,9 @@ from tornado.options import options
 from tornado.web import authenticated, Application, RequestHandler
 from bin.api.test import Test
 from bin.base import AuthHandler, BaseHandler
-from conf.settings import ROOT_PATH, MONGO_OPS, COOKIE_SECRET
-import motor
+from bin.util.db import Session
+from conf.settings import ROOT_PATH, MONGO_OPS, COOKIE_SECRET, SESSION_SERVER, SESSION_SECRET, SESSION_TIMEOUT
+
 
 tornado.options.define('port', default=8000, help='http port', type=int)
 tornado.options.define('debug', default=False, help='debug mode', type=bool)
@@ -30,11 +32,8 @@ class IndexHandler(RequestHandler):
         self.redirect('/overview')
 
 
-class OverviewHandler(RequestHandler):
-    def __init__(self, application, request, **kwargs):
-        super(OverviewHandler, self).__init__(application, request, **kwargs)
-        self.db = self.settings['db']
-
+class OverviewHandler(AuthHandler):
+    @authenticated
     @coroutine
     def get(self):
         test = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
@@ -42,9 +41,15 @@ class OverviewHandler(RequestHandler):
         # self.write('start1111')
 
 
-class LogoutHandler(AuthHandler):
+class LoginHandler(BaseHandler):
     def get(self):
-        # self.session.remove()
+        pass
+
+
+class LogoutHandler(AuthHandler):
+    @authenticated
+    def get(self):
+        self.session.remove()
         self.redirect("/login")
 
 
@@ -54,7 +59,7 @@ class WebPortal(Application):
             (r'/', IndexHandler),
             (r'/overview', OverviewHandler),
             (r'/api/test/test', Test),
-            # (r'/login', LoginHandler),
+            (r'/login', LoginHandler),
             (r'/logout', LogoutHandler),
         ]
         settings = dict(
@@ -65,7 +70,7 @@ class WebPortal(Application):
             static_path=os.path.join(ROOT_PATH, 'static'),
             template_path=os.path.join(ROOT_PATH, 'templates'),
             db={'ops': motor.MotorClient(MONGO_OPS['master']).devops},
-            # session=Session(SESSION_SECRET, SESSION_SERVER, SESSION_TIMEOUT)
+            session=Session(SESSION_SERVER, SESSION_TIMEOUT, SESSION_SECRET, self, options.debug)
         )
         print(settings["static_path"])
         super(WebPortal, self).__init__(handlers, **settings)

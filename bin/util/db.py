@@ -24,3 +24,8 @@ class Session(object):
             uid = self.request.get_secure_cookie('uid')
 
             return uid
+
+    def remove(self):
+        sid = self.request.get_secure_cookie('sid')
+        self.redis.delete(sid)
+        self.request.clear_all_cookies()
