@@ -11,19 +11,26 @@ class Session(object):
         self.request = request
         self.secure = secure
 
-    def set(self):
-        sid = base64.b64encode(uuid.uuid5(uuid.NAMESPACE_OID, self.session_secret).bytes+uuid.uuid4().bytes)
-        self.redis.setex(sid, self.session_timeout, self.request.uid)
-        if self.secure:
-            self.request.set_secure_cookie('sid', sid, httponly=True, secure=True)
+    def set(self, key):
+        if key == "sid":
+            sid = base64.b64encode(uuid.uuid5(uuid.NAMESPACE_OID, self.session_secret).bytes+uuid.uuid4().bytes)
+            self.redis.setex(sid, self.session_timeout, self.request.uid)
+            if self.secure:
+                self.request.set_secure_cookie('sid', sid, httponly=True, secure=True)
+            else:
+                self.request.set_secure_cookie('sid', sid, httponly=True)
         else:
-            self.request.set_secure_cookie('sid', sid, httponly=True)
+            pass
 
-    def get(self, argv):
-        if argv == 'uid':
+    def get(self, key):
+        uid = None
+        if key == "uid":
             uid = self.request.get_secure_cookie('uid')
+            sid = self.request.get_secure_cookie('sid')
+            if self.redis.get(sid) != uid:
+                uid = None
 
-            return uid
+        return uid
 
     def remove(self):
         sid = self.request.get_secure_cookie('sid')

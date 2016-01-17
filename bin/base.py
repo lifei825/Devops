@@ -24,7 +24,13 @@ class AuthHandler(BaseHandler):
     def get_current_user(self):
         return self.session.get('uid')
 
-    def save_uid(self):
+    def save_uid(self, uid=None):
+        if uid:
+            self.uid = uid
+            self.session.set('sid')
+        else:
+            self.uid = self.session.get('uid')
+
         if options.debug:
             self.set_cookie("uid", str(self.uid), expires_days=30, httponly=True)
         else:
