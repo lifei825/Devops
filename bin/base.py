@@ -18,8 +18,7 @@ class BaseHandler(RequestHandler):
 class AuthHandler(BaseHandler):
     def __init__(self, application, request, **kwargs):
         super(AuthHandler, self).__init__(application, request, **kwargs)
-        # self.session = Session(SESSION_SERVER, SESSION_TIMEOUT, SESSION_SECRET, self, options.debug)
-        self.session = self.settings['session']
+        self.session = Session(SESSION_SERVER, SESSION_TIMEOUT, SESSION_SECRET, self, options.debug)
         self.save_uid()
 
     def get_current_user(self):

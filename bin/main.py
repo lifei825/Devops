@@ -6,30 +6,22 @@ import tornado.ioloop
 import tornado.options
 from tornado.gen import coroutine
 from tornado.options import options
-from tornado.web import authenticated, Application, RequestHandler
+from tornado.web import authenticated, Application
 from bin.api.test import Test
 from bin.base import AuthHandler, BaseHandler
-from bin.util.db import Session
-from conf.settings import ROOT_PATH, MONGO_OPS, COOKIE_SECRET, SESSION_SERVER, SESSION_SECRET, SESSION_TIMEOUT
+from conf.settings import ROOT_PATH, MONGO_OPS, COOKIE_SECRET, log
 
 
-tornado.options.define('port', default=8000, help='http port', type=int)
+tornado.options.define('port', default=8888, help='http port', type=int)
 tornado.options.define('debug', default=False, help='debug mode', type=bool)
 tornado.options.parse_command_line()
 
 
-def auth_api(run):
-    def wrapper(self, *args, **kwargs):
-        if self._headers['Server'] == 'TornadoServer/4.2':
-            print('success', self._headers)
-            run(self, *args, **kwargs)
-    return wrapper
-
-
-class IndexHandler(RequestHandler):
-    #@auth_api
+class IndexHandler(BaseHandler):
     def get(self):
-        self.redirect('/overview')
+        log.warning("index,%s" % self._headers)
+        self.write("hahah")
+        # self.redirect('/overview')
 
 
 class OverviewHandler(AuthHandler):
@@ -38,11 +30,13 @@ class OverviewHandler(AuthHandler):
     def get(self):
         test = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
         self.render('index.html', test=test)
-        # self.write('start1111')
 
 
 class LoginHandler(BaseHandler):
     def get(self):
+        pass
+
+    def post(self):
         pass
 
 
@@ -70,9 +64,7 @@ class WebPortal(Application):
             static_path=os.path.join(ROOT_PATH, 'static'),
             template_path=os.path.join(ROOT_PATH, 'templates'),
             db={'ops': motor.MotorClient(MONGO_OPS['master']).devops},
-            session=Session(SESSION_SERVER, SESSION_TIMEOUT, SESSION_SECRET, self, options.debug)
         )
-        print(settings["static_path"])
         super(WebPortal, self).__init__(handlers, **settings)
 
     def start(self):
