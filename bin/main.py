@@ -32,12 +32,27 @@ class OverviewHandler(AuthHandler):
         self.render('index.html', test=test)
 
 
-class LoginHandler(BaseHandler):
+class LoginHandler(AuthHandler):
     def get(self):
-        pass
+        self.render('login.html')
 
+    @coroutine
     def post(self):
-        pass
+        user = self.get_argument('user')
+        passwd = self.get_argument('passwd')
+        try:
+            user_info = yield self.db['ops'].operator.find_one({'user': user, 'pwd': passwd},
+                                                               {'_id': 0, 'passwd': 0})
+            if user_info:
+                self.session.set('sid', user_info)
+                self.redirect("/overview")
+            else:
+                raise self.ecode.LOGINERR
+
+        except Exception as e:
+            state = isinstance(e, Exception) and e or self.ecode.UNKNOW
+            log.error(e)
+            self.render('login.html', status=state.eid)
 
 
 class LogoutHandler(AuthHandler):

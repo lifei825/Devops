@@ -1,6 +1,8 @@
 import redis
 import base64
 import uuid
+import json
+from conf.settings import log
 
 
 class Session(object):
@@ -11,26 +13,39 @@ class Session(object):
         self.request = request
         self.secure = secure
 
-    def set(self, key):
+    def set(self, key, val=None):
         if key == "sid":
             sid = base64.b64encode(uuid.uuid5(uuid.NAMESPACE_OID, self.session_secret).bytes+uuid.uuid4().bytes)
-            self.redis.setex(sid, self.session_timeout, self.request.uid)
+            self.redis.setex(sid, self.session_timeout, json.dumps(val))
             if self.secure:
                 self.request.set_secure_cookie('sid', sid, httponly=True, secure=True)
+                self.request.set_secure_cookie('uid', str(val['id']), httponly=True, secure=True)
             else:
                 self.request.set_secure_cookie('sid', sid, httponly=True)
+                self.request.set_secure_cookie('uid', str(val['id']), httponly=True)
         else:
-            pass
+            user_into = self.get('info')
+            user_into[key] = val
+            sid = self.request.get_secure_cookie('sid')
+            self.redis.setex(sid, self.session_timeout, json.dumps(user_into))
 
     def get(self, key):
-        uid = None
-        if key == "uid":
-            uid = self.request.get_secure_cookie('uid')
+        val = None
+        try:
             sid = self.request.get_secure_cookie('sid')
-            if self.redis.get(sid) != uid:
-                uid = None
+            data = self.redis.get(sid)
+            user_info = json.loads(data.decode()) if data else {}
+            if key == "uid":
+                val = self.request.get_secure_cookie('uid')
+                if str(user_info.get('id', '')) != val.decode():
+                    return False
 
-        return uid
+            elif key == 'info':
+                val = user_info
+        except Exception as e:
+            val = False
+            log.warning(e)
+        return val
 
     def remove(self):
         sid = self.request.get_secure_cookie('sid')
