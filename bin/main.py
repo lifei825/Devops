@@ -45,7 +45,7 @@ class LoginHandler(AuthHandler):
                                                                {'_id': 0, 'passwd': 0})
             if user_info:
                 self.session.set('sid', user_info)
-                self.redirect("/overview")
+                self.redirect(self.get_argument("next", "/overview"))
             else:
                 raise self.ecode.LOGINERR
 

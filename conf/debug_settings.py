@@ -2,14 +2,19 @@
 import os
 import logging
 import time
+from multiprocessing import cpu_count
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SESSION_SERVER = {'host': '127.0.0.1', 'port': 6379, 'db': 2, 'password': ''}
-MONGO_OPS = {'master': 'mongodb://user:passwd@127.0.0.1:27017/devops'}
+MONGO_OPS = {'master': 'mongodb://user:passwd@127.0.0.1:27017'}
 
 SESSION_SECRET = 'aaaaaaa'
 SESSION_TIMEOUT = 7200
+
+COOKIE_SECRET = 'aaaaa'
+
+CPU_COUNT = cpu_count()
 
 
 def logs():

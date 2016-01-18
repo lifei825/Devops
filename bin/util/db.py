@@ -44,8 +44,8 @@ class Session(object):
                 val = user_info
         except Exception as e:
             val = False
-            log.warning(e)
-        return val
+            log.info(e)
+        return val.decode()
 
     def remove(self):
         sid = self.request.get_secure_cookie('sid')
