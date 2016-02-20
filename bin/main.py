@@ -19,6 +19,7 @@ tornado.options.parse_command_line()
 
 class IndexHandler(BaseHandler):
     def get(self):
+        print (123)
         log.warning("index,%s" % self._headers)
         self.write("hahah")
         # self.redirect('/overview')
@@ -28,13 +29,17 @@ class OverviewHandler(AuthHandler):
     @authenticated
     @coroutine
     def get(self):
+        print('over', self.user_info)
         test = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
         self.render('index.html', test=test)
 
 
 class LoginHandler(AuthHandler):
     def get(self):
-        self.render('login.html')
+        if self.session.get('uid'):
+            self.redirect('/overview')
+        else:
+            self.render('login.html')
 
     @coroutine
     def post(self):
@@ -44,7 +49,7 @@ class LoginHandler(AuthHandler):
             user_info = yield self.db['ops'].operator.find_one({'user': user, 'pwd': passwd},
                                                                {'_id': 0, 'passwd': 0})
             if user_info:
-                self.session.set('sid', user_info)
+                self.save_user_info(user_info)
                 self.redirect(self.get_argument("next", "/overview"))
             else:
                 raise self.ecode.LOGINERR
@@ -88,4 +93,5 @@ class WebPortal(Application):
 
 
 if __name__ == '__main__':
+    print (options.debug)
     WebPortal().start()
