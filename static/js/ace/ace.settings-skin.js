@@ -47,7 +47,7 @@
 	function applyChanges(skin_class) {
 		//skin cookie tip
 		var body = $(document.body);
-		body.removeClass('no-skin skin-1 skin-2 skin-3');
+		body.removeClass('skin-2 skin-3 no-skin skin-1 ');
 		//if(skin_class != 'skin-0') {
 			body.addClass(skin_class);
 			ace.data.set('skin', skin_class);
@@ -86,9 +86,10 @@
 			$('.sidebar-shortcuts .btn').each(function() {
 				$(this).attr('class', 'btn ' + skin0_buttons[i++%4]);
 			})
-			
+
 			$('.sidebar[data-sidebar-scroll=true]').ace_sidebar_scroll('updateStyle', '');
 			$('.sidebar[data-sidebar-hover=true]').ace_sidebar_hover('updateStyle', 'no-track scroll-thin');
+
 		}
 
 		else if(skin_class == 'skin-1') {
@@ -106,10 +107,10 @@
 		else if(skin_class == 'skin-2') {
 			$('.ace-nav > li').addClass('no-border margin-1');
 			$('.ace-nav > li:not(:last-child)').addClass('light-pink').find('> a > '+ace.vars['.icon']).addClass('pink').end().eq(0).find('.badge').addClass('badge-warning');
-			
+
 			$('.sidebar-shortcuts .btn').attr('class', 'btn btn-white btn-pink')
 			.find(ace.vars['.icon']).addClass('white');
-			
+
 			$('.sidebar[data-sidebar-scroll=true]').ace_sidebar_scroll('updateStyle', 'scroll-white no-track');
 			$('.sidebar[data-sidebar-hover=true]').ace_sidebar_hover('updateStyle', 'no-track scroll-thin scroll-white');
 		}
@@ -118,7 +119,7 @@
 		//change shortcut buttons classes, this should be hard-coded if you want to choose this skin
 		else if(skin_class == 'skin-3') {
 			body.addClass('no-skin');//because skin-3 has many parts of no-skin as well
-			
+
 			$('.ace-nav > li.grey').addClass('red').find('.badge').addClass('badge-yellow');
 			
 			var i = 0;

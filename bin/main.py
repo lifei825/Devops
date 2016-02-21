@@ -19,17 +19,16 @@ tornado.options.parse_command_line()
 
 class IndexHandler(BaseHandler):
     def get(self):
-        print (123)
         log.warning("index,%s" % self._headers)
-        self.write("hahah")
+        # self.write("hahah")
         # self.redirect('/overview')
+        self.render('blank.html')
 
 
 class OverviewHandler(AuthHandler):
     @authenticated
     @coroutine
     def get(self):
-        print('over', self.user_info)
         test = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
         self.render('index.html', test=test)
 
