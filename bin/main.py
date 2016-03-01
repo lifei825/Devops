@@ -92,5 +92,4 @@ class WebPortal(Application):
 
 
 if __name__ == '__main__':
-    print (options.debug)
     WebPortal().start()
