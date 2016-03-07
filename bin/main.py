@@ -29,8 +29,9 @@ class OverviewHandler(AuthHandler):
     @authenticated
     @coroutine
     def get(self):
+        print(self.user_info)
         test = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
-        self.render('index.html', test=test)
+        self.render('base.html', test=test)
 
 
 class LoginHandler(AuthHandler):
@@ -44,6 +45,7 @@ class LoginHandler(AuthHandler):
     def post(self):
         user = self.get_argument('user')
         passwd = self.get_argument('passwd')
+        print(self.user_info)
         try:
             user_info = yield self.db['ops'].operator.find_one({'user': user, 'pwd': passwd},
                                                                {'_id': 0, 'passwd': 0})
