@@ -31,7 +31,15 @@ class OverviewHandler(AuthHandler):
     def get(self):
         print(self.user_info)
         test = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
-        self.render('base.html', test=test)
+        self.render('blank.html', test=test, title="视图")
+
+
+class AssetListHandler(AuthHandler):
+    @authenticated
+    @coroutine
+    def get(self):
+        doc = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
+        self.render('asset.html', doc=doc, title="资产管理")
 
 
 class LoginHandler(AuthHandler):
@@ -76,6 +84,7 @@ class WebPortal(Application):
             (r'/api/test/test', Test),
             (r'/login', LoginHandler),
             (r'/logout', LogoutHandler),
+            (r'/asset', AssetListHandler),
         ]
         settings = dict(
             debug=options.debug,

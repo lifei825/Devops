@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block body %}
+<div class="well well-sm">
+		You can have a custom jqGrid download here:
+		<a href="http://www.trirand.com/blog/?page_id=6" target="_blank">
+			http://www.trirand.com/blog/?page_id=6
+			<i class="fa fa-external-link bigger-110"></i>
+		</a>
+	</div>
+
+	<table id="grid-table"></table>
+
+	<div id="grid-pager"></div>
+
+	<script type="text/javascript">
+        $('#asset').attr('class','active');
+		var $path_base = "..";//in Ace demo this will be used for editurl parameter
+	</script>
+    <!-- page specific plugin scripts -->
+		<script src="/static/js/date-time/bootstrap-datepicker.js"></script>
+		<script src="/static/js/jqGrid/jquery.jqGrid.src.js"></script>
+		<script src="/static/js/jqGrid/i18n/grid.locale-en.js"></script>
+
+
+{% end %}
