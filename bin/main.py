@@ -31,7 +31,7 @@ class OverviewHandler(AuthHandler):
     def get(self):
         print(self.user_info)
         test = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
-        self.render('blank.html', test=test, title="视图")
+        self.render('overview.html', test=test, title="overview")
 
 
 class AssetListHandler(AuthHandler):
