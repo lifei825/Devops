@@ -2,9 +2,10 @@
 import time
 from tornado.options import options
 from tornado.web import RequestHandler
-from conf.settings import SESSION_SECRET, SESSION_SERVER, SESSION_TIMEOUT
+from conf.settings import SESSION_SECRET, SESSION_SERVER, SESSION_TIMEOUT, log
 from bin.util.db import Session
 from bin.util import error_code
+from bin.util.tools import Dict
 
 
 class BaseHandler(RequestHandler):
@@ -15,6 +16,22 @@ class BaseHandler(RequestHandler):
         self.uid = 0
         self.db = self.settings['db']
         self.ecode = error_code
+
+    def request_arguments(self, params):
+        arguments = self.request.arguments
+        for param in params:
+            if param not in arguments:
+                log.error("param:%s is need" % param)
+                raise self.ecode.PARAM_ERR
+        dto = Dict()
+        dto.update({key: arguments[key][0].decode('utf-8') for key in arguments})
+        log.warning("req params=%s" % dto)
+        return dto
+
+    def get_id(self, name):
+        db_id = self.db['ops'].ids.find_and_modify(query={'name': name}, update={'$inc': {'id': 1}},
+                                                   new=True, fields={'_id': 0, 'id': 1})
+        return db_id
 
 
 class AuthHandler(BaseHandler):

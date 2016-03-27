@@ -8,16 +8,18 @@
 	</div>
 
     <table id="grid-table"></table>
-
+    {% module xsrf_form_html() %}
     <div id="grid-pager"></div>
 
 	<script type="text/javascript">
         $('#asset').attr('class','active');
 		var $path_base = "..";//in Ace demo this will be used for editurl parameter
+
 	</script>
 
     <!-- page specific plugin scripts -->
-        <script src="/static/scripts/jqgird.js"></script>
+        <script src="/static/js/jquery.cookie.js"></script>
+        <script src="/static/scripts/asset_jqGird.js"></script>
         <script src="/static/js/date-time/bootstrap-datepicker.js"></script>
 		<script src="/static/js/jqGrid/jquery.jqGrid.src.js"></script>
 		<script src="/static/js/jqGrid/i18n/grid.locale-en.js"></script>

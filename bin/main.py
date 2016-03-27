@@ -8,6 +8,7 @@ from tornado.gen import coroutine
 from tornado.options import options
 from tornado.web import authenticated, Application
 from bin.api.test import Test
+from bin.api.asset import ServerList, ServerSave
 from bin.base import AuthHandler, BaseHandler
 from conf.settings import ROOT_PATH, MONGO_OPS, COOKIE_SECRET, log
 
@@ -85,6 +86,8 @@ class WebPortal(Application):
             (r'/login', LoginHandler),
             (r'/logout', LogoutHandler),
             (r'/asset', AssetListHandler),
+            (r'/asset/serverList', ServerList),
+            (r'/asset/serverSave', ServerSave),
         ]
         settings = dict(
             debug=options.debug,

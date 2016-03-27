@@ -1,41 +1,3 @@
-var grid_data =
-			[
-				{id:"1",name:"Desktop Computer",note:"note",stock:"Yes",ship:"FedEx", sdate:"2007-12-03"},
-				{id:"2",name:"Laptop",note:"Long text ",stock:"Yes",ship:"InTime",sdate:"2007-12-03"},
-				{id:"3",name:"LCD Monitor",note:"note3",stock:"Yes",ship:"TNT",sdate:"2007-12-03"},
-				{id:"4",name:"Speakers",note:"note",stock:"No",ship:"ARAMEX",sdate:"2007-12-03"},
-				{id:"5",name:"Laser Printer",note:"note2",stock:"Yes",ship:"FedEx",sdate:"2007-12-03"},
-				{id:"6",name:"Play Station",note:"note3",stock:"No", ship:"FedEx",sdate:"2007-12-03"},
-				{id:"7",name:"Mobile Telephone",note:"note",stock:"Yes",ship:"ARAMEX",sdate:"2007-12-03"},
-				{id:"8",name:"Server",note:"note2",stock:"Yes",ship:"TNT",sdate:"2007-12-03"},
-				{id:"9",name:"Matrix Printer",note:"note3",stock:"No", ship:"FedEx",sdate:"2007-12-03"},
-				{id:"10",name:"Desktop Computer",note:"note",stock:"Yes",ship:"FedEx", sdate:"2007-12-03"},
-				{id:"11",name:"Laptop",note:"Long text ",stock:"Yes",ship:"InTime",sdate:"2007-12-03"},
-				{id:"12",name:"LCD Monitor",note:"note3",stock:"Yes",ship:"TNT",sdate:"2007-12-03"},
-				{id:"13",name:"Speakers",note:"note",stock:"No",ship:"ARAMEX",sdate:"2007-12-03"},
-				{id:"14",name:"Laser Printer",note:"note2",stock:"Yes",ship:"FedEx",sdate:"2007-12-03"},
-				{id:"15",name:"Play Station",note:"note3",stock:"No", ship:"FedEx",sdate:"2007-12-03"},
-				{id:"16",name:"Mobile Telephone",note:"note",stock:"Yes",ship:"ARAMEX",sdate:"2007-12-03"},
-				{id:"17",name:"Server",note:"note2",stock:"Yes",ship:"TNT",sdate:"2007-12-03"},
-				{id:"18",name:"Matrix Printer",note:"note3",stock:"No", ship:"FedEx",sdate:"2007-12-03"},
-				{id:"19",name:"Matrix Printer",note:"note3",stock:"No", ship:"FedEx",sdate:"2007-12-03"},
-				{id:"20",name:"Desktop Computer",note:"note",stock:"Yes",ship:"FedEx", sdate:"2007-12-03"},
-				{id:"21",name:"Laptop",note:"Long text ",stock:"Yes",ship:"InTime",sdate:"2007-12-03"},
-				{id:"22",name:"LCD Monitor",note:"note3",stock:"Yes",ship:"TNT",sdate:"2007-12-03"},
-				{id:"23",name:"Speakers",note:"note",stock:"No",ship:"ARAMEX",sdate:"2007-12-03"}
-			];
-
-			var subgrid_data =
-			[
-			 {id:"1", name:"sub grid item 1", qty: 11},
-			 {id:"2", name:"sub grid item 2", qty: 3},
-			 {id:"3", name:"sub grid item 3", qty: 12},
-			 {id:"4", name:"sub grid item 4", qty: 5},
-			 {id:"5", name:"sub grid item 5", qty: 2},
-			 {id:"6", name:"sub grid item 6", qty: 9},
-			 {id:"7", name:"sub grid item 7", qty: 3},
-			 {id:"8", name:"sub grid item 8", qty: 8}
-			];
 
 			jQuery(function($) {
 				var grid_selector = "#grid-table";
@@ -44,7 +6,7 @@ var grid_data =
 				//resize to fit page size
 				$(window).on('resize.jqGrid', function () {
 					$(grid_selector).jqGrid( 'setGridWidth', $(".page-content").width() );
-			    })
+			    });
 				//resize on sidebar collapse/expand
 				var parent_column = $(grid_selector).closest('[class*="col-"]');
 				$(document).on('settings.ace.jqGrid' , function(ev, event_name, collapsed) {
@@ -54,7 +16,7 @@ var grid_data =
 							$(grid_selector).jqGrid( 'setGridWidth', parent_column.width() );
 						}, 0);
 					}
-			    })
+			    });
 
 				//if your grid is inside another element, for example a tab pane, you should use its parent's width:
 				/**
@@ -76,38 +38,12 @@ var grid_data =
 
 
 				jQuery(grid_selector).jqGrid({
-					//direction: "rtl",
-
-					//subgrid options
-					subGrid : true,
-					//subGridModel: [{ name : ['No','Item Name','Qty'], width : [55,200,80] }],
-					//datatype: "xml",
-					subGridOptions : {
-						plusicon : "ace-icon fa fa-plus center bigger-110 blue",
-						minusicon  : "ace-icon fa fa-minus center bigger-110 blue",
-						openicon : "ace-icon fa fa-chevron-right center orange"
-					},
-					//for this example we are using local data
-					subGridRowExpanded: function (subgridDivId, rowId) {
-						var subgridTableId = subgridDivId + "_t";
-						$("#" + subgridDivId).html("<table id='" + subgridTableId + "'></table>");
-						$("#" + subgridTableId).jqGrid({
-							datatype: 'local',
-							data: subgrid_data,
-							colNames: ['No','Item Name','Qty'],
-							colModel: [
-								{ name: 'id', width: 50 },
-								{ name: 'name', width: 150 },
-								{ name: 'qty', width: 50 }
-							]
-						});
-					},
-
-
-
-					data: grid_data,
-					datatype: "local",
-					height: 250,
+                    url: '/asset/serverList',
+                    mtype: 'get',
+					datatype: "json",
+					height: 500,
+                    sortname: 'id',
+                    sortorder: 'desc',
 					colNames:[' ', 'ID','Last Sales','Name', 'Stock', 'Ship via','Notes'],
 					colModel:[
 						{name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
@@ -116,15 +52,18 @@ var grid_data =
 								keys:true,
 								//delbutton: false,//disable delete button
 
-								delOptions:{recreateForm: true, beforeShowForm:beforeDeleteCallback},
+								delOptions:{recreateForm: true, beforeShowForm:beforeDeleteCallback}
 								//editformbutton:true, editOptions:{recreateForm: true, beforeShowForm:beforeEditCallback}
 							}
 						},
-						{name:'id',index:'id', width:60, sorttype:"int", editable: true},
-						{name:'sdate',index:'sdate',width:90, editable:true, sorttype:"date",unformat: pickDate},
-						{name:'name',index:'name', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+						{name:'id',index:'id', width:60, sorttype:"int", editable: false},
+						{name:'outside_ip',index:'outside_ip', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+                        {name:'inside_ip',index:'inside_ip', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+                        {name:'project_name',index:'project_name', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+                        {name:'server_type',index:'server_type', width:90, editable: true,edittype:"select",editoptions:{value:"0:server;1:database;2:monitor;3:test;4:backup"}},
 						{name:'stock',index:'stock', width:70, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"},unformat: aceSwitch},
 						{name:'ship',index:'ship', width:90, editable: true,edittype:"select",editoptions:{value:"FE:FedEx;IN:InTime;TN:TNT;AR:ARAMEX"}},
+                        {name:'modified',index:'sdate',width:90, editable:true, sorttype:"date",unformat: pickDate},
 						{name:'note',index:'note', width:150, sortable:false,editable: true,edittype:"textarea", editoptions:{rows:"2",cols:"10"}}
 					],
 
@@ -150,10 +89,17 @@ var grid_data =
 						}, 0);
 					},
 
-					editurl: "/dummy.html",//nothing is saved
-					caption: "jqGrid with inline editing"
+					editurl: "/asset/serverSave",//nothing is saved
+					caption: "jqGrid with inline editing",
 
-					//,autowidth: true,
+					autowidth: true,
+                    jsonReader: {
+                        root: 'rows',
+                        page: 'page',
+                        records: 'records',
+                        total: "total",
+                        repeatitems: false
+                    }
 
 
 					/**
@@ -218,7 +164,7 @@ var grid_data =
 						recreateForm: true,
 						beforeShowForm : function(e) {
 							var form = $(e[0]);
-							form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+							form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
 							style_edit_form(form);
 						}
 					},
@@ -231,9 +177,10 @@ var grid_data =
 						beforeShowForm : function(e) {
 							var form = $(e[0]);
 							form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
-							.wrapInner('<div class="widget-header" />')
+							.wrapInner('<div class="widget-header" />');
 							style_edit_form(form);
-						}
+						},
+                        editData: {_xsrf: $.cookie('_xsrf')}
 					},
 					{
 						//delete record form
@@ -242,7 +189,7 @@ var grid_data =
 							var form = $(e[0]);
 							if(form.data('styled')) return false;
 
-							form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
+							form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
 							style_delete_form(form);
 
 							form.data('styled', true);
@@ -283,7 +230,7 @@ var grid_data =
 
 				function style_edit_form(form) {
 					//enable datepicker on "sdate" field and switches for "stock" field
-					form.find('input[name=sdate]').datepicker({format:'yyyy-mm-dd' , autoclose:true})
+					form.find('input[name=sdate]').datepicker({format:'yyyy-mm-dd' , autoclose:true});
 
 					form.find('input[name=stock]').addClass('ace ace-switch ace-switch-5').after('<span class="lbl"></span>');
 							   //don't wrap inside a label element, the checkbox value won't be submitted (POST'ed)
@@ -294,7 +241,7 @@ var grid_data =
 					var buttons = form.next().find('.EditButton .fm-button');
 					buttons.addClass('btn btn-sm').find('[class*="-icon"]').hide();//ui-icon, s-icon
 					buttons.eq(0).addClass('btn-primary').prepend('<i class="ace-icon fa fa-check"></i>');
-					buttons.eq(1).prepend('<i class="ace-icon fa fa-times"></i>')
+					buttons.eq(1).prepend('<i class="ace-icon fa fa-times"></i>');
 
 					buttons = form.next().find('.navButton a');
 					buttons.find('.ui-icon').hide();

@@ -7,5 +7,6 @@ class ErrorCode(Exception):
         self.message = message
 
 OK = ErrorCode(0, '正确')
-UNKNOW = ErrorCode(1, '未知错误')
-LOGINERR = ErrorCode(2, '登陆验证错误')
+UNKNOWN = ErrorCode(1, '未知错误')
+LOGIN_ERR = ErrorCode(2, '登陆验证错误')
+PARAM_ERR = ErrorCode(3, '参数错误')
