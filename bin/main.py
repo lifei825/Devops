@@ -8,7 +8,7 @@ from tornado.gen import coroutine
 from tornado.options import options
 from tornado.web import authenticated, Application
 from bin.api.test import Test
-from bin.api.asset import ServerList, ServerSave
+from bin.api.server import ServerList, ServerSave
 from bin.base import AuthHandler, BaseHandler
 from conf.settings import ROOT_PATH, MONGO_OPS, COOKIE_SECRET, log
 
@@ -35,12 +35,12 @@ class OverviewHandler(AuthHandler):
         self.render('overview.html', test=test, title="overview")
 
 
-class AssetListHandler(AuthHandler):
+class ServerListHandler(AuthHandler):
     @authenticated
     @coroutine
     def get(self):
         doc = yield self.db['ops'].server.find({}, {'_id': 0}).to_list(100)
-        self.render('asset.html', doc=doc, title="资产管理")
+        self.render('server.html', doc=doc, title="资产管理")
 
 
 class LoginHandler(AuthHandler):
@@ -80,14 +80,18 @@ class LogoutHandler(AuthHandler):
 class WebPortal(Application):
     def __init__(self):
         handlers = [
+            # test
             (r'/', IndexHandler),
-            (r'/overview', OverviewHandler),
             (r'/api/test/test', Test),
+            # manager
             (r'/login', LoginHandler),
             (r'/logout', LogoutHandler),
-            (r'/asset', AssetListHandler),
-            (r'/asset/serverList', ServerList),
-            (r'/asset/serverSave', ServerSave),
+            # overview
+            (r'/overview', OverviewHandler),
+            # server
+            (r'/server', ServerListHandler),
+            (r'/server/list', ServerList),
+            (r'/server/save', ServerSave),
         ]
         settings = dict(
             debug=options.debug,

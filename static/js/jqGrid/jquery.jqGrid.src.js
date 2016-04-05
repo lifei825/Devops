@@ -9419,7 +9419,7 @@ $.jgrid.extend({
 		// End compatible
 
 		var success = false;
-		var $t = this[0], nm, tmp={}, tmp2={}, tmp3= {}, editable, fr, cv, ind;
+		var $t = this[0], nm, tmp={'_xsrf': $.cookie('_xsrf')}, tmp2={}, tmp3= {}, editable, fr, cv, ind;
 		if (!$t.grid ) { return success; }
 		ind = $($t).jqGrid("getInd",rowid,true);
 		if(ind === false) {return success;}

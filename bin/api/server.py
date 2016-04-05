@@ -44,9 +44,9 @@ class ServerSave(AuthHandler):
             print(request_param)
             if oper == 'add':
                 uid = yield self.get_id('server')
-                yield self.db['ops'].test.insert({'id': uid['id'], 'sdate': '2016-03-01', 'name': 'aa',
-                                                  'stock': 'Yes',
-                                                  'ship': "aa",
+                yield self.db['ops'].test.insert({'id': uid['id'], 'modified': '2016-03-01', 'project_name': 'aa',
+                                                  'status': 'Yes',
+                                                  'location_name': "aa",
                                                   'note': "haha"})
 
             state = self.ecode.OK

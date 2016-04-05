@@ -38,33 +38,34 @@
 
 
 				jQuery(grid_selector).jqGrid({
-                    url: '/asset/serverList',
+                    url: '/server/list',
                     mtype: 'get',
 					datatype: "json",
 					height: 500,
                     sortname: 'id',
                     sortorder: 'desc',
-					colNames:[' ', 'ID','Last Sales','Name', 'Stock', 'Ship via','Notes'],
+					colNames:[' ', 'ID','外网','内网', '项目', '区域', '负责人', '类型','状态','最近修改','Notes'],
 					colModel:[
 						{name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
 							formatter:'actions',
 							formatoptions:{
 								keys:true,
-								//delbutton: false,//disable delete button
-
-								delOptions:{recreateForm: true, beforeShowForm:beforeDeleteCallback}
-								//editformbutton:true, editOptions:{recreateForm: true, beforeShowForm:beforeEditCallback}
-							}
+								//delbutton: true,//disable delete button
+								delOptions:{recreateForm: true, beforeShowForm:beforeDeleteCallback, delData: {_xsrf: $.cookie('_xsrf')}},
+								//editformbutton:true,
+                                //editOptions:{recreateForm: true, beforeShowForm:beforeEditCallback, delData: {_xsrf: $.cookie('_xsrf')}}
+							},
 						},
 						{name:'id',index:'id', width:60, sorttype:"int", editable: false},
 						{name:'outside_ip',index:'outside_ip', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
                         {name:'inside_ip',index:'inside_ip', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
                         {name:'project_name',index:'project_name', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+						{name:'location_name',index:'location_name', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
+						{name:'person',index:'person', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
                         {name:'server_type',index:'server_type', width:90, editable: true,edittype:"select",editoptions:{value:"0:server;1:database;2:monitor;3:test;4:backup"}},
-						{name:'stock',index:'stock', width:70, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"},unformat: aceSwitch},
-						{name:'ship',index:'ship', width:90, editable: true,edittype:"select",editoptions:{value:"FE:FedEx;IN:InTime;TN:TNT;AR:ARAMEX"}},
-                        {name:'modified',index:'sdate',width:90, editable:true, sorttype:"date",unformat: pickDate},
-						{name:'note',index:'note', width:150, sortable:false,editable: true,edittype:"textarea", editoptions:{rows:"2",cols:"10"}}
+						{name:'status',index:'status', width:70, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"},unformat: aceSwitch},
+                        {name:'modified',index:'modified',width:90, editable:true, sorttype:"date",unformat: pickDate},
+						{name:'note',index:'note', width:150, sortable:false,editable: true,edittype:"textarea", editoptions:{rows:"2",cols:"10"}},
 					],
 
 					viewrecords : true,
@@ -89,7 +90,7 @@
 						}, 0);
 					},
 
-					editurl: "/asset/serverSave",//nothing is saved
+					editurl: "/server/save",//nothing is saved
 					caption: "jqGrid with inline editing",
 
 					autowidth: true,
@@ -159,14 +160,15 @@
 					},
 					{
 						//edit record form
-						//closeAfterEdit: true,
+						closeAfterEdit: true,
 						//width: 700,
 						recreateForm: true,
 						beforeShowForm : function(e) {
 							var form = $(e[0]);
 							form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
 							style_edit_form(form);
-						}
+						},
+                        editData: {_xsrf: $.cookie('_xsrf')},
 					},
 					{
 						//new record form
@@ -188,15 +190,12 @@
 						beforeShowForm : function(e) {
 							var form = $(e[0]);
 							if(form.data('styled')) return false;
-
 							form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />');
 							style_delete_form(form);
-
 							form.data('styled', true);
 						},
-						onClick : function(e) {
-							//alert(1);
-						}
+                        delData: {_xsrf: $.cookie('_xsrf')}
+						//onClick : function(e) {alert(1);},
 					},
 					{
 						//search form
@@ -224,15 +223,16 @@
 							form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
 						}
 					}
-				)
+				);
+
 
 
 
 				function style_edit_form(form) {
 					//enable datepicker on "sdate" field and switches for "stock" field
-					form.find('input[name=sdate]').datepicker({format:'yyyy-mm-dd' , autoclose:true});
+					form.find('input[name=modified]').datepicker({format:'yyyy-mm-dd' , autoclose:true});
 
-					form.find('input[name=stock]').addClass('ace ace-switch ace-switch-5').after('<span class="lbl"></span>');
+					form.find('input[name=status]').addClass('ace ace-switch ace-switch-5').after('<span class="lbl"></span>');
 							   //don't wrap inside a label element, the checkbox value won't be submitted (POST'ed)
 							  //.addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
 
@@ -353,3 +353,4 @@
 					$('.ui-jqdialog').remove();
 				});
 			});
+
