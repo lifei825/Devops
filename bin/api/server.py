@@ -12,7 +12,6 @@ class ServerList(AuthHandler):
         doc = []
         page = records = total = ""
         try:
-            # a = yield self.get_id('server')
             request_param = self.request_arguments(['page'])
             page = request_param.get_int('page', 1)
             length = request_param.get_int('rows', 10)
@@ -41,10 +40,9 @@ class ServerSave(AuthHandler):
         try:
             request_param = self.request_arguments(['oper'])
             oper = request_param.get_str('oper')
-            print(request_param)
             if oper == 'add':
                 uid = yield self.get_id('server')
-                yield self.db['ops'].test.insert({'id': uid['id'], 'modified': '2016-03-01', 'project_name': 'aa',
+                yield self.db['ops'].test.insert({'id': uid['id'], 'modified': '2016-03-01 01:00', 'project_name': 'aa',
                                                   'status': 'Yes',
                                                   'location_name': "aa",
                                                   'note': "haha"})

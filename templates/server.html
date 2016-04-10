@@ -7,6 +7,9 @@
 		</a>
 	</div>
 
+    <a href="javascript:void(0)" id="hcg">Hide column Amount and Tax</a><br />
+    <a href="javascript:void(0)" id="scg">Show column Amount and Tax</a>
+
     <table id="grid-table"></table>
     <div id="grid-pager"></div>
 
@@ -14,6 +17,15 @@
         $('#asset').attr('class','active open');
         $('#server').attr('class','active');
 		var $path_base = "..";//in Ace demo this will be used for editurl parameter
+
+        jQuery("#hcg").click(function() {
+            jQuery("#grid-table").jqGrid('hideCol', [ "modified", "inside_ip" ]).trigger("reloadGrid");
+            //jQuery("#grid-table").setGridParam().hideCol("modified").trigger("reloadGrid");
+        });
+        jQuery("#scg").click(function() {
+            //jQuery("#grid-table").jqGrid('showCol', [ "modified", "inside_ip" ]);
+            jQuery("#grid-table").setGridParam().showCol(["modified", "inside_ip"]).trigger("resize");
+        });
 
 	</script>
 

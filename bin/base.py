@@ -20,7 +20,7 @@ class BaseHandler(RequestHandler):
     def request_arguments(self, params):
         arguments = self.request.arguments
         for param in params:
-            if param not in arguments:
+            if not arguments.get(param, ''):
                 log.error("param:%s is need" % param)
                 raise self.ecode.PARAM_ERR
         dto = Dict()

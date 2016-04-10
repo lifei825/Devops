@@ -44,18 +44,8 @@
 					height: 500,
                     sortname: 'id',
                     sortorder: 'desc',
-					colNames:[' ', 'ID','外网','内网', '项目', '区域', '负责人', '类型','状态','最近修改','Notes'],
+					colNames:['ID','外网','内网', '项目', '区域', '负责人', '类型','状态','最近修改','Notes', '   '],
 					colModel:[
-						{name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
-							formatter:'actions',
-							formatoptions:{
-								keys:true,
-								//delbutton: true,//disable delete button
-								delOptions:{recreateForm: true, beforeShowForm:beforeDeleteCallback, delData: {_xsrf: $.cookie('_xsrf')}},
-								//editformbutton:true,
-                                //editOptions:{recreateForm: true, beforeShowForm:beforeEditCallback, delData: {_xsrf: $.cookie('_xsrf')}}
-							},
-						},
 						{name:'id',index:'id', width:60, sorttype:"int", editable: false},
 						{name:'outside_ip',index:'outside_ip', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
                         {name:'inside_ip',index:'inside_ip', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
@@ -64,8 +54,18 @@
 						{name:'person',index:'person', width:150,editable: true,editoptions:{size:"20",maxlength:"30"}},
                         {name:'server_type',index:'server_type', width:90, editable: true,edittype:"select",editoptions:{value:"0:server;1:database;2:monitor;3:test;4:backup"}},
 						{name:'status',index:'status', width:70, editable: true,edittype:"checkbox",editoptions: {value:"Yes:No"},unformat: aceSwitch},
-                        {name:'modified',index:'modified',width:90, editable:true, sorttype:"date",unformat: pickDate},
+                        {name:'modified',index:'modified',width:90, editable:false, hidedlg: true, sorttype:"date",unformat: pickDate},
 						{name:'note',index:'note', width:150, sortable:false,editable: true,edittype:"textarea", editoptions:{rows:"2",cols:"10"}},
+						{name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
+							formatter:'actions',
+							formatoptions:{
+								keys:true,
+								//delbutton: true,//disable delete button
+								delOptions:{recreateForm: true, beforeShowForm:beforeDeleteCallback, delData: {_xsrf: $.cookie('_xsrf')}}
+								//editformbutton:true,
+								//editOptions:{recreateForm: true, beforeShowForm:beforeEditCallback, delData: {_xsrf: $.cookie('_xsrf')}}
+							}
+						}
 					],
 
 					viewrecords : true,
@@ -117,6 +117,7 @@
 
 				});
 				$(window).triggerHandler('resize.jqGrid');//trigger window resize to make the grid get the correct size
+
 
 
 
@@ -225,7 +226,7 @@
 					}
 				);
 
-
+                //jQuery(grid_selector).jqGrid('inlineNav', pager_selector);
 
 
 				function style_edit_form(form) {
