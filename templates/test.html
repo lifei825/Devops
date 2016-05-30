@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <form action='save' enctype="multipart/form-data" method='post'>
+        filename<input type='text' name='oper'/><br/>
+        <input type='submit' value='submit'/>
+        {% module xsrf_form_html() %}
+    </form>
+</head>
+<body>
+
+</body>
+</html>

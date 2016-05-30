@@ -9,6 +9,7 @@ from tornado.options import options
 from tornado.web import authenticated, Application
 from bin.api.test import Test
 from bin.api.server import ServerList, ServerSave
+from bin.api.operator import OperatorSave
 from bin.base import AuthHandler, BaseHandler
 from conf.settings import ROOT_PATH, MONGO_OPS, COOKIE_SECRET, log
 
@@ -62,7 +63,7 @@ class LoginHandler(AuthHandler):
                 self.save_user_info(user_info)
                 self.redirect(self.get_argument("next", "/overview"))
             else:
-                raise self.ecode.LOGINERR
+                raise self.ecode.LOGIN_ERR
 
         except Exception as e:
             state = isinstance(e, Exception) and e or self.ecode.UNKNOW
@@ -92,6 +93,7 @@ class WebPortal(Application):
             (r'/server', ServerListHandler),
             (r'/server/list', ServerList),
             (r'/server/save', ServerSave),
+            (r'/operator/save', OperatorSave),
         ]
         settings = dict(
             debug=options.debug,

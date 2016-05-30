@@ -7,14 +7,14 @@ class Mongodb(object):
         self.conf = conf['master']
         self.db = pymongo.MongoClient(self.conf).devops
 
-    def create_id(self):
+    def create_id(self, collection):
         self.db.ids.ensure_index('name', unique=True)
-        self.db.ids.save({'name': 'server', 'id': 0})
+        self.db.ids.save({'name': collection, 'id': 0})
 
 
 if __name__ == '__main__':
     conn = Mongodb(MONGO_OPS)
-    print(conn.db.test.remove())
+    # print(conn.db.test.remove())
     # import random
     # l = "FE:IN:TN:AR".split(':')
     # for i in range(100):
@@ -24,5 +24,6 @@ if __name__ == '__main__':
     #                          'note': "haha"})
     #
     # print(conn.db.test.find_one({}, {'_id': 0}))
-    conn.create_id()
+    conn.create_id('server')
+    conn.create_id('operator')
     print(conn.db.ids.find_one({}, {'_id': 0}))
