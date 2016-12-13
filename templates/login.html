@@ -336,6 +336,15 @@
 		//login
         <script src="/static/js/jquery.cookie.js"></script>
 		<script type="text/javascript">
+            //回车事件触发登录
+            document.onkeydown = function (e) {
+                var theEvent = window.event || e;
+                var code = theEvent.keyCode || theEvent.which;
+                if (code == 13) {
+                    $("#login").click();
+                }
+            };
+
             jQuery(function($) {
                 $('#login').on('click', function () {
                     var data = {
@@ -351,6 +360,7 @@
                             });
                 });
             });
+
 		</script>
 	</body>
 </html>

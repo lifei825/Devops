@@ -3,6 +3,7 @@ from bin.base import AuthHandler
 from tornado.gen import coroutine
 from tornado.web import authenticated
 from conf.settings import log
+import time
 
 
 class ServerList(AuthHandler):
@@ -40,12 +41,33 @@ class ServerSave(AuthHandler):
         try:
             request_param = self.request_arguments(['oper'])
             oper = request_param.get_str('oper')
+            inside_ip = request_param.get_str('inside_ip')
+            outside_ip = request_param.get_str('outside_ip')
+            server_type = request_param.get_int('server_type')
+            server_id = request_param.get_str('id', None)
+            modified = time.strftime("%F %T")
+            project = request_param.get_str("project_name")
+            status = request_param.get_str("status")
+            location = request_param.get_str("location_name")
+            note = request_param.get_str("note")
             if oper == 'add':
                 uid = yield self.get_id('server')
-                yield self.db['ops'].test.insert({'id': uid['id'], 'modified': '2016-03-01 01:00', 'project_name': 'aa',
-                                                  'status': 'Yes',
-                                                  'location_name': "aa",
-                                                  'note': "haha"})
+                yield self.db['ops'].test.insert({'id': uid['id'], 'modified': modified, 'project_name': project,
+                                                  'inside_ip': inside_ip,
+                                                  'outside_ip': outside_ip,
+                                                  'server_type': server_type,
+                                                  'status': status,
+                                                  'location_name': location,
+                                                  'note': note})
+            elif oper == 'edit':
+                yield self.db['ops'].test.update({'id': server_id}, {"$set": {'modified': modified,
+                                                                              'inside_ip': inside_ip,
+                                                                              'outside_ip': outside_ip,
+                                                                              'server_type': server_type,
+                                                                              'project_name': project,
+                                                                              'status': status,
+                                                                              'location_name': location,
+                                                                              'note': note}})
 
             state = self.ecode.OK
         except Exception as e:

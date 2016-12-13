@@ -5,12 +5,15 @@ from conf.settings import MONGO_OPS
 class Mongodb(object):
     def __init__(self, conf):
         self.conf = conf['master']
-        self.db = pymongo.MongoClient(self.conf).devops
+        self.db = pymongo.MongoClient(self.conf)
 
     def create_id(self, collection):
-        self.db.ids.ensure_index('name', unique=True)
-        self.db.ids.save({'name': collection, 'id': 0})
-
+        if not self.db['devops'].ids.index_information().get('name_1', ''):
+            self.db['devops'].ids.ensure_index('name', unique=True)
+        try:
+            self.db['devops'].ids.save({'name': collection, 'id': 0})
+        except Exception as e:
+            print(e)
 
 if __name__ == '__main__':
     conn = Mongodb(MONGO_OPS)
@@ -24,6 +27,7 @@ if __name__ == '__main__':
     #                          'note': "haha"})
     #
     # print(conn.db.test.find_one({}, {'_id': 0}))
+    print(conn.db['devops'].ids.index_information())
     conn.create_id('server')
     conn.create_id('operator')
-    print(conn.db.ids.find_one({}, {'_id': 0}))
+    print(list(conn.db['devops'].ids.find({}, {'_id': 0})))
