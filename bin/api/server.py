@@ -60,15 +60,16 @@ class ServerSave(AuthHandler):
                                                   'location_name': location,
                                                   'note': note})
             elif oper == 'edit':
-                yield self.db['ops'].test.update({'id': server_id}, {"$set": {'modified': modified,
-                                                                              'inside_ip': inside_ip,
-                                                                              'outside_ip': outside_ip,
-                                                                              'server_type': server_type,
-                                                                              'project_name': project,
-                                                                              'status': status,
-                                                                              'location_name': location,
-                                                                              'note': note}})
-
+                result = yield self.db['ops'].test.update({'id': int(server_id)}, {"$set": {'modified': modified,
+                                                                                            'inside_ip': inside_ip,
+                                                                                            'outside_ip': outside_ip,
+                                                                                            'server_type': server_type,
+                                                                                            'project_name': project,
+                                                                                            'status': status,
+                                                                                            'location_name': location,
+                                                                                            'note': note}})
+                if not result.get('updatedExisting', False):
+                    raise self.ecode.DB_UPDATE_ERR
             state = self.ecode.OK
         except Exception as e:
             state = isinstance(e, Exception) and e or self.ecode.UNKNOWN
